@@ -1,0 +1,183 @@
+{
+  "name": "Scholarship Scout - Daily Noon Delivery",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "58 11 * * *"
+            }
+          ]
+        }
+      },
+      "id": "43e63b24-23c7-41a3-b2f4-4df647bb01a1",
+      "name": "Daily 11:58 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        260,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "command": "py scholarship_scout.py"
+      },
+      "id": "7ebdb302-563d-4c0c-8339-4cecfd2589b2",
+      "name": "Run Scholarship Scout",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        500,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "scholarships",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "e3fc13ac-c30b-4bb7-b3e9-d6f637b9ed36",
+      "name": "Receive Scholarship Results",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        260,
+        460
+      ],
+      "webhookId": "c70e4d53-2210-4b1f-8fd1-b76466d3a593"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "early-arrival-condition",
+              "leftValue": "={{ $now.setZone('Asia/Karachi').toMillis() < $now.setZone('Asia/Karachi').set({ hour: 12, minute: 0, second: 0, millisecond: 0 }).toMillis() }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c1b27b72-cbc8-4a2e-8db0-ecb7e5cd5fe3",
+      "name": "Before Noon?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "specificTime",
+        "dateTime": "={{ $now.setZone('Asia/Karachi').set({ hour: 12, minute: 0, second: 0, millisecond: 0 }).toISO() }}"
+      },
+      "id": "af52d9b8-dba7-4f4e-9ef7-788f3bb5a7b6",
+      "name": "Wait Until Noon",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        380
+      ],
+      "webhookId": "c9daf84d-5ab6-4424-9f52-2798152b949a"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.body }}",
+        "options": {}
+      },
+      "id": "70db7467-c303-4c01-9c44-f5f1c3310baf",
+      "name": "Return Final Results",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        980,
+        460
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily 11:58 AM": {
+      "main": [
+        [
+          {
+            "node": "Run Scholarship Scout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Scholarship Results": {
+      "main": [
+        [
+          {
+            "node": "Before Noon?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Before Noon?": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Noon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Final Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Noon": {
+      "main": [
+        [
+          {
+            "node": "Return Final Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Asia/Karachi",
+    "executionOrder": "v1"
+  },
+  "versionId": "23f5e489-7d2a-41f0-8d37-572f50e15f33",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

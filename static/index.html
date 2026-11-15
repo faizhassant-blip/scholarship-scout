@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090714">
+<title>Scholarship Scout AI</title>
+<style>
+:root{color-scheme:dark;--bg:#080711;--panel:rgba(18,16,36,.78);--soft:rgba(34,29,59,.72);--line:rgba(177,160,255,.16);--text:#f2efff;--muted:#a19bb8;--accent:#b9a2ff;--cyan:#83e8ff;--green:#68f0b0;--amber:#ffd37a;--red:#ff6b91}
+*{box-sizing:border-box}body{min-width:320px;min-height:100vh;margin:0;background:radial-gradient(ellipse at 68% -12%,#47217c55,transparent 42%),radial-gradient(ellipse at 4% 72%,#142d7255,transparent 38%),linear-gradient(145deg,#100b21 0%,#080711 54%,#10091d 100%);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}body:before{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 75% 16%,#c17aff0a,transparent 28%);content:"";pointer-events:none}button,input{font:inherit}button{color:inherit;cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-rows:76px 1fr}.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:25px;padding:0 27px;border-bottom:1px solid var(--line);background:rgba(10,8,22,.77);backdrop-filter:blur(20px)}.brand{display:flex;align-items:center;gap:12px;min-width:260px}.mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid #b9a2ff6b;border-radius:14px;background:linear-gradient(145deg,#a77cff35,#76e7ff12);box-shadow:0 0 28px #9d68ff30;color:var(--cyan);font-size:21px}.brand b{font-size:15px;letter-spacing:.01em}.brand small{display:block;color:var(--muted);font-size:11px}.system-status{display:inline-flex;align-items:center;gap:8px;margin-left:auto;padding:7px 12px;border:1px solid #68f0b038;border-radius:99px;background:#68f0b00d;color:#a8ffd4;font-size:11px;font-weight:700;letter-spacing:.04em;white-space:nowrap}.system-status.offline{border-color:#ff6b9155;background:#ff6b910d;color:#ff9caf}.system-status.offline .pulse{background:var(--red);box-shadow:0 0 12px var(--red);animation:none}.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 1.8s infinite}@keyframes pulse{50%{opacity:.42;box-shadow:0 0 3px var(--green)}}.search{height:42px;max-width:520px;flex:1;display:flex;align-items:center;gap:10px;padding:0 14px;border:1px solid var(--line);border-radius:13px;background:#ffffff08;color:var(--muted)}.search:focus-within{border-color:#a786ff88;box-shadow:0 0 20px #9d68ff1c}.search input{width:100%;border:0;outline:0;background:transparent;color:var(--text)}.search input::placeholder{color:#8e88a4}.search small{font-size:10px;white-space:nowrap}.avatar{width:35px;height:35px;display:grid;place-items:center;border:1px solid #b9a2ff55;border-radius:50%;background:#a77cff22;color:#e3d8ff;font-weight:700}
+.layout{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:calc(100vh - 76px)}.sidebar{position:sticky;top:76px;height:calc(100vh - 76px);padding:24px 15px;border-right:1px solid var(--line);background:rgba(20,15,37,.58);backdrop-filter:blur(22px)}.compose{width:100%;height:48px;margin-bottom:26px;border:1px solid #c8a9ff72;border-radius:14px;background:linear-gradient(100deg,#a667ff,#6f81ff 62%,#55d8ed);box-shadow:0 7px 28px #9562ff35;color:#100b20;font-weight:800;letter-spacing:.01em;transition:transform .2s,box-shadow .2s}.compose:hover{transform:translateY(-2px);box-shadow:0 10px 34px #9562ff65}.compose:disabled{opacity:.65;cursor:wait}.compose.loading{background-size:200% 100%;animation:scanGlow 1.2s linear infinite}.label{padding:9px 13px;color:#827b9c;font-size:10px;font-weight:750;letter-spacing:.15em;text-transform:uppercase}.nav{width:100%;min-height:43px;display:flex;align-items:center;gap:12px;margin:3px 0;padding:0 13px;border:1px solid transparent;border-radius:12px;background:transparent;color:#b9b2ce;text-align:left;white-space:nowrap;transition:.18s}.nav:hover{background:#ffffff08;color:white}.nav.active{border-color:#b9a2ff24;background:linear-gradient(90deg,#a77cff24,#72ddff0a);color:#e1d4ff;font-weight:700}.count{margin-left:auto;color:#a7a0bb;font-size:11px}.rule{height:1px;margin:19px 11px;background:var(--line)}.note{margin:21px 4px 0;padding:14px;border:1px solid #9a7aff27;border-radius:14px;background:linear-gradient(145deg,#a77cff0c,#ffffff04)}.note b{font-size:12px}.note p{margin:7px 0 0;color:var(--muted);font-size:11px}
+.main{min-width:0;padding:27px clamp(16px,3vw,42px)}.inbox{max-width:1500px;margin:auto}.heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:0 0 22px}.eyebrow,.kicker{color:var(--cyan);font-size:10px;font-weight:750;letter-spacing:.16em;text-transform:uppercase}.heading h1{margin:6px 0 3px;font-size:clamp(25px,3vw,34px);font-weight:680;letter-spacing:-.045em}.subtitle{color:var(--muted);font-size:13px}.heading-actions{display:flex;gap:9px}.primary,.secondary{min-height:39px;padding:0 14px;border:1px solid var(--line);border-radius:11px;background:#ffffff08;color:#ddd5f4;font-size:12px;font-weight:700;transition:.2s}.primary{border-color:#b99aff90;background:linear-gradient(105deg,#a969ff,#7786ff 65%,#5ddbed);box-shadow:0 6px 23px #9860ff2e;color:#110d20}.primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px #9860ff59}.primary:disabled{opacity:.55;cursor:not-allowed;transform:none}.primary.loading{background-size:200% 100%;animation:scanGlow 1.2s linear infinite}@keyframes scanGlow{to{background-position:-200% 0}}.secondary:hover{border-color:#b9a2ff70;background:#ffffff0e}.system-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:0 0 20px}.system-card{padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,rgba(37,27,64,.78),rgba(17,17,37,.72));box-shadow:0 12px 38px #0002;backdrop-filter:blur(15px)}.system-card-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.system-card-title{color:#c7bddf;font-size:11px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}.system-icon{color:var(--cyan);font-size:17px}.system-value{margin-top:7px;font-size:20px;font-weight:750;letter-spacing:-.03em}.system-detail{margin-top:2px;color:var(--muted);font-size:11px}.meter{height:5px;margin-top:13px;overflow:hidden;border-radius:9px;background:#ffffff12}.meter-fill{width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#a765ff,#63e4ef);box-shadow:0 0 12px #9e6aff70;transition:width .5s}.notice{display:flex;gap:9px;margin:0 0 15px;padding:11px 13px;border:1px solid #b58bff2c;border-radius:11px;background:#a77cff0b;color:#c7bbdf;font-size:11px}.notice strong{color:#e9dcff}.tabs{display:flex;gap:4px;padding:0 8px;border-bottom:1px solid var(--line)}.tab{position:relative;min-height:46px;padding:0 14px;border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:650}.tab.active{color:#dccbff}.tab.active:after{position:absolute;right:9px;bottom:-1px;left:9px;height:2px;background:linear-gradient(90deg,#b77cff,#65e3ed);box-shadow:0 0 12px #a36aff;content:""}.toolbar{display:flex;justify-content:space-between;align-items:center;min-height:43px;padding:0 11px;border-bottom:1px solid var(--line)}.toolbar button{border:0;background:transparent;color:var(--muted);font-size:11px}.toolbar button:hover{color:var(--text)}.results{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:16px;padding-top:16px;align-items:start}.list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));align-content:start;gap:12px;min-width:0}.row{position:relative;display:grid;grid-template-columns:16px 36px minmax(0,1fr) 23px;align-content:start;gap:9px;min-height:174px;padding:16px 14px;border:1px solid #b9a2ff1e;border-radius:16px;background:linear-gradient(145deg,rgba(30,24,51,.88),rgba(16,18,37,.86));box-shadow:0 9px 28px #0002;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;backdrop-filter:blur(12px)}.row:hover{transform:translateY(-3px);border-color:#9c78ff9c;box-shadow:0 12px 35px #8f5cff25,0 0 0 1px #9c78ff26}.row.selected{border-color:#a78bfa9c;box-shadow:0 0 0 1px #a78bfa46,0 12px 32px #8f5cff22}.row.hidden{display:none}.check{margin-top:4px;accent-color:#ad86ff}.sender-icon{width:35px;height:35px;display:grid;place-items:center;border:1px solid #b9a2ff36;border-radius:12px;background:var(--ibg);color:var(--ifg);font-size:10px;font-weight:800}.row-content{min-width:0}.row-top{display:flex;justify-content:space-between;gap:8px}.sender{overflow:hidden;font-size:12px;font-weight:750;text-overflow:ellipsis;white-space:nowrap}.date{flex:none;color:var(--muted);font-size:9px}.subject{margin-top:10px;overflow:hidden;color:#e7e0f7;font-size:14px;font-weight:650;text-overflow:ellipsis;white-space:nowrap}.snippet{display:-webkit-box;margin-top:5px;overflow:hidden;color:#aaa3bd;font-size:11px;line-height:1.6;-webkit-box-orient:vertical;-webkit-line-clamp:2}.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.tag{padding:3px 8px;border:1px solid #9587b526;border-radius:99px;background:#ffffff06;color:#c4bdd5;font-size:9px}.tag.review{border-color:#c49b4c55;background:#ffd37a12;color:#ffe0a2}.tag.review:before{content:"◷ "}.tag.safe{border-color:#68f0b05a;background:#68f0b014;color:#9fffc9;font-size:10px;font-weight:850;letter-spacing:.06em}.tag.safe:before{content:"✓ AI VERIFIED"}.tag.safe{font-size:0}.tag.safe:before{font-size:10px}.tag.scam{border-color:#ff6b9166;background:#ff6b9115;color:#ff9caf;font-size:10px;font-weight:850;letter-spacing:.06em}.tag.scam:before{content:"! SCAM DETECTED"}.star{padding:0;border:0;background:transparent;color:#aaa1bd;font-size:19px}.star:hover,.star.saved{color:var(--amber)}.detail{position:sticky;top:96px;padding:21px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,rgba(30,23,52,.83),rgba(15,17,34,.86));box-shadow:0 12px 36px #0002;backdrop-filter:blur(16px)}.detail h2{margin:8px 0;font-size:21px;font-weight:680;letter-spacing:-.035em;line-height:1.3}.meta{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:15px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px}.subhead{margin-top:18px;color:#a59abf;font-size:10px;font-weight:750;letter-spacing:.13em;text-transform:uppercase}.description{color:#c9c1d9;font-size:12px;line-height:1.7}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:15px}.stat{padding:10px;border:1px solid var(--line);border-radius:11px;background:#ffffff06}.stat span{display:block;color:#a59abf;font-size:9px;text-transform:uppercase}.stat b{display:block;margin-top:4px;font-size:12px;font-weight:600}.disclaimer{margin-top:15px;padding:11px;border:1px solid #8e78cc35;border-radius:10px;background:#9c7aff0b;color:#c9c0dc;font-size:10px}.actions{display:flex;gap:8px;margin-top:15px}.empty{display:none;grid-column:1/-1;padding:48px 14px;border:1px dashed #9e8bc83d;border-radius:15px;color:var(--muted);text-align:center;font-size:12px}.empty.visible{display:block}.toast{position:fixed;right:20px;bottom:19px;z-index:10;padding:12px 16px;border:1px solid #b99aff4d;border-radius:12px;background:rgba(25,19,44,.95);box-shadow:0 8px 28px #0008;font-size:12px;opacity:0;pointer-events:none;transform:translateY(7px);transition:.2s;backdrop-filter:blur(12px)}.toast.visible{opacity:1;transform:translateY(0)}
+@media(max-width:1050px){.layout{grid-template-columns:215px minmax(0,1fr)}.brand{min-width:230px}.results{grid-template-columns:minmax(0,1fr)}.detail{position:static}.list{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}}
+@media(max-width:680px){.app{grid-template-rows:auto 1fr}.topbar{flex-wrap:wrap;gap:10px;padding:10px 13px}.brand{flex:1;min-width:0}.system-status{margin-left:0}.search{order:3;flex-basis:100%;height:39px}.layout{grid-template-columns:1fr}.sidebar{position:static;display:block;width:100%;height:auto;padding:8px 10px;border-right:0;border-bottom:1px solid var(--line)}.sidebar .label,.sidebar .rule,.sidebar .note{display:none}.compose{height:42px;margin:0}.sidebar .nav{display:none}.main{padding:19px 12px}.heading{align-items:flex-start;flex-direction:column;padding-bottom:16px}.heading-actions{width:100%}.heading-actions button{flex:1}.system-grid{gap:9px}.system-card{padding:13px}.system-value{font-size:17px}.tabs{overflow-x:auto;padding:0 2px}.tab{padding:0 10px;white-space:nowrap}.results{gap:12px;padding-top:12px}.list{grid-template-columns:1fr}.row{min-height:155px}.detail{padding:17px}.detail h2{font-size:19px}}
+@media(max-width:680px){.profile-form{grid-template-columns:1fr}.profile-panel{padding:18px}}
+.profile-overlay[hidden]{display:none}.profile-overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;overflow:auto;padding:20px;background:#070510d9;backdrop-filter:blur(16px)}.profile-panel{width:min(100%,620px);max-height:min(92vh,820px);overflow:auto;padding:25px;border:1px solid #b9a2ff55;border-radius:20px;background:linear-gradient(145deg,#211638f5,#111426f8);box-shadow:0 25px 100px #000b,0 0 42px #9562ff22}.profile-panel h2{margin:5px 0;font-size:25px;letter-spacing:-.04em}.profile-panel>p{margin:0 0 18px;color:var(--muted);font-size:12px}.profile-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.profile-field{display:grid;gap:5px}.profile-field.wide{grid-column:1/-1}.profile-field label{color:#c9c0df;font-size:11px;font-weight:650}.profile-field input,.profile-field select{width:100%;height:42px;padding:0 11px;border:1px solid var(--line);border-radius:10px;outline:none;background:#090816;color:var(--text)}.profile-field input:focus,.profile-field select:focus{border-color:#b9a2ff99;box-shadow:0 0 0 3px #a77cff16}.profile-help{color:var(--muted);font-size:10px}.profile-privacy{grid-column:1/-1;margin:2px 0 0;padding:10px;border:1px solid #68f0b02b;border-radius:10px;background:#68f0b009;color:#c1d9d0;font-size:10px}.profile-submit{grid-column:1/-1;width:100%;height:44px;margin-top:3px}.primary[aria-disabled=true]{opacity:.5;pointer-events:none}.notice a{color:var(--cyan)}
+.star{justify-self:end;align-self:start;padding:5px 9px;border:1px solid var(--line);border-radius:9px;background:#ffffff08;color:#c9c1d9;font-size:10px;font-weight:700;white-space:nowrap}.star:hover{border-color:#ffd37a88;color:var(--amber)}.star.saved{border-color:#ffd37a66;background:#ffd37a18;color:var(--amber)}#save-detail.saved{border-color:#ffd37a66;background:#ffd37a18;color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="mark" aria-hidden="true">✦</div><div><b>Scholarship Scout AI</b><small>Your intelligent opportunity dashboard</small></div></div>
+    <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search opportunities" aria-label="Search scholarships"><small>Ctrl K</small></label>
+    <div class="system-status" id="system-status" role="status"><span class="pulse"></span><span id="system-status-text">System Online</span></div>
+    <div class="avatar" aria-label="Student profile">S</div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <button class="compose" id="scan">✦ &nbsp;Run AI Scan</button>
+      <div class="label">Opportunity feed</div>
+      <button class="nav active" data-filter="all">✉ &nbsp;All opportunities <span class="count" id="all-count">00</span></button>
+      <button class="nav" data-filter="likely">◈ &nbsp;Likely matches <span class="count" id="matched-count">00</span></button>
+      <button class="nav" data-filter="review">◷ &nbsp;Needs review <span class="count" id="review-count">06</span></button>
+      <button class="nav" data-filter="saved">☆ &nbsp;Saved <span class="count" id="saved-count">02</span></button>
+      <div class="rule"></div><div class="label">Your system</div>
+      <div class="note"><b>◆ &nbsp;Local-first AI</b><p>Scans use Ollama on this computer. Storage and memory readings come from the local API.</p></div>
+    </aside>
+    <main class="main">
+      <section class="inbox" aria-label="Scholarship Scout dashboard">
+        <div class="heading"><div><div class="eyebrow">Live opportunity finder</div><h1>Scholarship opportunities</h1><div class="subtitle">Fresh listings ranked against your study profile.</div></div><div class="heading-actions"><button class="secondary" id="refresh">↻ &nbsp;Refresh</button><button class="secondary" id="edit-profile">☷ &nbsp;My profile</button><button class="primary" id="new-scan">✦ &nbsp;Find live matches</button></div></div>
+        <section class="system-grid" aria-label="Live system resources">
+          <article class="system-card"><div class="system-card-top"><span class="system-card-title">Storage · project drive</span><span class="system-icon" aria-hidden="true">▰</span></div><div class="system-value" id="storage-value">Loading…</div><div class="system-detail" id="storage-detail">Reading local disk usage</div><div class="meter" aria-hidden="true"><div class="meter-fill" id="storage-bar"></div></div></article>
+          <article class="system-card"><div class="system-card-top"><span class="system-card-title">Memory · RAM</span><span class="system-icon" aria-hidden="true">▦</span></div><div class="system-value" id="memory-value">Loading…</div><div class="system-detail" id="memory-detail">Reading available memory</div><div class="meter" aria-hidden="true"><div class="meter-fill" id="memory-bar"></div></div></article>
+        </section>
+        <div class="notice" id="notice"><span aria-hidden="true">ⓘ</span><span><strong>Not legal or eligibility advice.</strong> Web verification is disabled; all results remain unverified. Confirm details with the official provider.</span></div>
+        <div class="tabs" role="tablist" aria-label="Opportunity filters"><button class="tab active" role="tab" aria-selected="true" data-filter="all">All listings</button><button class="tab" role="tab" aria-selected="false" data-filter="likely">Likely matches</button><button class="tab" role="tab" aria-selected="false" data-filter="review">Check eligibility</button><button class="tab" role="tab" aria-selected="false" data-filter="saved">Saved</button></div>
+        <div class="toolbar"><div><button id="select-all">□ &nbsp;Select visible</button><button id="clear" style="margin-left:14px">Clear search</button></div><span id="results-count" style="color:var(--muted);font-size:11px">0 results</span></div>
+        <div class="results">
+          <div class="list" id="list" role="list">
+            <div class="empty visible" id="empty">Set your profile, then choose “Find live matches” to search recent listings.</div>
+          </div>
+          <section class="detail" aria-live="polite"><div class="kicker">Opportunity details</div><h2 id="detail-title">Run a live search to see opportunities</h2><div class="meta"><span id="detail-org">Scholarship source</span><span class="tag review" id="detail-status">Eligibility needs confirmation</span></div><div class="subhead">About this opportunity</div><p class="description" id="detail-description">Live listing details will appear here.</p><div class="stats"><div class="stat"><span>Eligible region</span><b id="detail-region">Not specified</b></div><div class="stat"><span>Age range</span><b id="detail-age">Not specified</b></div><div class="stat"><span>Deadline</span><b id="detail-deadline">Not provided</b></div><div class="stat"><span>Verification</span><b id="detail-verification">Not verified</b></div></div><div class="subhead">Profile fit notes</div><p class="description" id="match-reasons">Eligibility details are checked against the profile.</p><div class="disclaimer" id="detail-disclaimer">Listings are gathered from multiple scholarship sources. Eligibility and legitimacy are not independently verified; confirm all details with the official provider.</div><div class="actions"><a class="primary" id="view" href="#" target="_blank" rel="noopener noreferrer" aria-disabled="true">Open source listing</a><button class="secondary" id="save-detail" disabled>☆ &nbsp;Save</button></div><div class="subhead">Scan summary</div><p class="description" id="summary">No live search has run yet.</p><p class="description" id="motivation"></p><div class="subhead">Contacts found in scan</div><ul id="contacts" class="description"></ul></section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="profile-overlay" id="profile-dialog" hidden>
+    <section class="profile-panel" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+      <div class="eyebrow">Personalize your search</div>
+      <h2 id="profile-title">Tell Scout what you’re looking for</h2>
+      <p>These details help rank current opportunities and check explicit eligibility. If a listing leaves a rule out, Scout will say so instead of guessing.</p>
+      <form class="profile-form" id="profile-form">
+        <div class="profile-field"><label for="profile-age">Age</label><input id="profile-age" name="age" type="number" min="5" max="100" required></div>
+        <div class="profile-field"><label for="profile-country">Country of residence</label><input id="profile-country" name="country" type="text" maxlength="80" autocomplete="country-name" placeholder="e.g. Pakistan" required></div>
+        <div class="profile-field"><label for="profile-level">Current study level</label><select id="profile-level" name="study_level" required><option value="school">School / secondary</option><option value="undergraduate">Undergraduate</option><option value="masters">Master’s / postgraduate</option><option value="doctoral">Doctoral / PhD</option><option value="vocational">Vocational / technical</option><option value="any">Other / flexible</option></select></div>
+        <div class="profile-field"><label for="profile-grade">Current class / year (optional)</label><input id="profile-grade" name="grade" type="number" min="1" max="30" placeholder="e.g. 7"></div>
+        <div class="profile-field wide"><label for="profile-field">Subject or study interest (optional)</label><input id="profile-field" name="field_of_study" type="text" maxlength="120" placeholder="e.g. computer science, arts, engineering"></div>
+        <div class="profile-field wide"><label for="profile-type">Opportunity type</label><select id="profile-type" name="scholarship_type"><option value="any">Any scholarships and student opportunities</option><option value="need_based">Need-based / financial aid</option><option value="merit_based">Merit-based</option><option value="field_specific">Subject-specific</option><option value="research">Research</option><option value="competition">Competitions and awards</option><option value="study_abroad">Study abroad</option></select></div>
+        <div class="profile-privacy">Your profile is kept in this browser tab and sent only to the local Scholarship Scout server and Ollama. It is not sent to listing sites.</div>
+        <button class="primary profile-submit" type="submit">Find live scholarships</button>
+      </form>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+  const list=document.getElementById("list"), filters=[...document.querySelectorAll("[data-filter]")], search=document.getElementById("search"), toast=document.getElementById("toast");
+  const empty=document.getElementById("empty"), saved=new Set(), savedRecords=new Map(), records=[];
+  let displayRecords=records;
+  const profileDialog=document.getElementById("profile-dialog"), profileForm=document.getElementById("profile-form");
+  let filter="all", selected=-1, timer, polling=false, profile=null, hasScanned=false, savedReady;
+  const saving=new Set();
+  try{const stored=sessionStorage.getItem("scholarship-scout-profile");if(stored)profile=JSON.parse(stored)}catch(error){console.warn("Could not load this tab's saved search profile.",error)}
+  function showProfileDialog(){
+    if(profile){
+      for(const [key,value] of Object.entries(profile)){const field=profileForm.elements.namedItem(key);if(field)field.value=value==null?"":String(value)}
+    }
+    profileDialog.hidden=false;
+    document.getElementById("profile-age").focus();
+  }
+  function hideProfileDialog(){profileDialog.hidden=true}
+  function notify(message){toast.textContent=message;toast.classList.add("visible");clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove("visible"),3200)}
+  function addText(parent,tag,className,text){const node=document.createElement(tag);if(className)node.className=className;node.textContent=text;parent.append(node);return node}
+  function scholarshipKey(record){const sourceUrl=typeof record.source_url==="string"?record.source_url.trim():"";return sourceUrl?`url:${sourceUrl.replace(/\/+$/,"").toLowerCase()}`:`name:${String(record.name||"").trim().toLowerCase()}`}
+  async function loadSaved(){
+    const response=await fetch("/api/saved",{cache:"no-store"});
+    const payload=await response.json();
+    if(!response.ok)throw new Error(payload.error||`Could not load saved scholarships (${response.status}).`);
+    saved.clear();savedRecords.clear();
+    (Array.isArray(payload.scholarships)?payload.scholarships:[]).forEach(record=>{const key=scholarshipKey(record);saved.add(key);savedRecords.set(key,record)});
+  }
+  function refreshRows(){
+    if(filter==="saved"){
+      displayRecords=[...savedRecords.entries()].map(([key,record])=>records.find(item=>scholarshipKey(item)===key)||record);
+    }else displayRecords=records;
+    list.querySelectorAll(".row").forEach(row=>row.remove());
+    displayRecords.forEach(makeRow);
+  }
+  async function toggleSaved(record){
+    try{
+      if(!await savedReady)throw new Error("Saved scholarships could not be loaded.");
+    }catch(error){notify(error.message);return}
+    const key=scholarshipKey(record), button=document.activeElement;
+    if(saving.has(key))return;
+    saving.add(key);
+    if(button&&button.matches(".star,#save-detail"))button.disabled=true;
+    try{
+      const response=await fetch("/api/save",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({scholarship:record})});
+      const payload=await response.json();
+      if(!response.ok)throw new Error(payload.error||`Could not save scholarship (${response.status}).`);
+      if(button)button.disabled=false;
+      if(payload.saved){saved.add(key);savedRecords.set(key,{...record,status:payload.status||"Interested"})}
+      else{saved.delete(key);savedRecords.delete(key)}
+      const selectedKey=selected>=0&&displayRecords[selected]?scholarshipKey(displayRecords[selected]):null;
+      refreshRows();render();
+      if(selectedKey){const nextIndex=displayRecords.findIndex(item=>scholarshipKey(item)===selectedKey);if(nextIndex>=0)select(nextIndex);else{selected=-1;document.getElementById("save-detail").disabled=true}}
+      notify(payload.saved?"Saved as Interested.":"Removed from saved scholarships.");
+    }catch(error){notify(error.message);if(button)button.disabled=false}
+    finally{saving.delete(key)}
+  }
+  function setMessage(message,isError=false){const notice=document.getElementById("notice");notice.lastElementChild.textContent=message;notice.style.borderColor=isError?"#744548":"";notice.style.color=isError?"#f0b5b7":""}
+  function select(index){
+    selected=index;
+    const record=displayRecords[index], row=list.querySelector(`[data-index="${index}"]`);
+    list.querySelectorAll(".row").forEach(item=>item.classList.toggle("selected",item===row));
+    if(!record)return;
+    document.getElementById("detail-title").textContent=record.name||"Untitled opportunity";
+    document.getElementById("detail-org").textContent=record.source_name||"Scholarship source";
+    document.getElementById("detail-description").textContent=record.description||"No description was returned.";
+    document.getElementById("detail-region").textContent=Array.isArray(record.eligible_countries)?record.eligible_countries.map(value=>value==="Restricted; see listing"?"Restrictions listed at source":value).join(" · "):"Not specified";
+    document.getElementById("detail-age").textContent=record.eligible_ages||"Not specified";
+    document.getElementById("detail-deadline").textContent=record.application_deadline||"Not provided";
+    document.getElementById("detail-verification").textContent="Not independently verified";
+    document.getElementById("detail-status").textContent=record.match_status||"Check eligibility";
+    document.getElementById("detail-status").className="tag review";
+    document.getElementById("match-reasons").textContent=Array.isArray(record.match_reasons)&&record.match_reasons.length?record.match_reasons.join(" · "):"Review the source listing to confirm the rules.";
+    const sourceLink=document.getElementById("view");
+    if(record.source_url){sourceLink.href=record.source_url;sourceLink.setAttribute("aria-disabled","false")}
+    else{sourceLink.href="#";sourceLink.setAttribute("aria-disabled","true")}
+    sourceLink.onclick=event=>{if(!record.source_url)event.preventDefault()};
+    const saveButton=document.getElementById("save-detail");
+    saveButton.disabled=false;
+    saveButton.classList.toggle("saved",saved.has(scholarshipKey(record)));
+    saveButton.textContent=saved.has(scholarshipKey(record))?"★  Saved":"☆  Save";
+  }
+  function render(){
+    const query=search.value.trim().toLowerCase();
+    const rows=[...list.querySelectorAll(".row")];
+    let shown=0;
+    rows.forEach(row=>{
+      const index=Number(row.dataset.index), record=displayRecords[index];
+      const matchesFilter=filter==="all"||(filter==="saved"?saved.has(scholarshipKey(record)):filter==="likely"?record.match_status==="Likely match":filter==="review"?record.match_status!=="Likely match":false);
+      const visible=matchesFilter&&(!query||row.dataset.search.includes(query));
+      row.classList.toggle("hidden",!visible);if(visible)shown++;
+    });
+    empty.classList.toggle("visible",shown===0);
+    if(!records.length)empty.textContent=polling?"Searching recent live listings…":hasScanned?"No current listings matched this profile. Edit your profile or try again later.":"Set your profile, then choose “Find live matches” to search recent listings.";
+    else empty.textContent="No live opportunities match this view. Try another filter or edit your profile.";
+    document.getElementById("results-count").textContent=shown?`1–${shown} of ${shown}`:"0 results";
+    filters.forEach(button=>{const active=button.dataset.filter===filter;button.classList.toggle("active",active);if(button.hasAttribute("role"))button.setAttribute("aria-selected",String(active))});
+    document.getElementById("all-count").textContent=String(records.length).padStart(2,"0");
+    document.getElementById("matched-count").textContent=String(records.filter(item=>item.match_status==="Likely match").length).padStart(2,"0");
+    document.getElementById("review-count").textContent=String(records.filter(item=>item.match_status!=="Likely match").length).padStart(2,"0");
+    document.getElementById("saved-count").textContent=String(savedRecords.size).padStart(2,"0");
+  }
+  function makeRow(record,index){
+    const row=document.createElement("article");row.className="row";row.setAttribute("role","listitem");row.tabIndex=0;row.dataset.index=String(index);
+    row.dataset.search=[record.name,record.description,record.eligible_countries,record.eligible_ages].join(" ").toLowerCase();
+    const check=document.createElement("input");check.className="check";check.type="checkbox";check.setAttribute("aria-label",`Select ${record.name||"opportunity"}`);row.append(check);
+    const icon=addText(row,"div","sender-icon",(record.name||"?").slice(0,2).toUpperCase());icon.style.setProperty("--ibg",record.match_status==="Likely match"?"#29453f":"#343d50");icon.style.setProperty("--ifg",record.match_status==="Likely match"?"#a5ddc5":"#b9c9f3");
+    const content=document.createElement("div");content.className="row-content";row.append(content);
+    const top=document.createElement("div");top.className="row-top";content.append(top);addText(top,"span","sender",record.name||"Untitled opportunity");addText(top,"time","date",record.source_name||"LIVE LISTING");
+    addText(content,"div","subject",record.name||"Untitled opportunity");addText(content,"div","snippet",record.description||"No listing description was available.");
+    const tags=document.createElement("div");tags.className="tags";content.append(tags);addText(tags,"span",record.match_status==="Likely match"?"tag safe":"tag review",record.match_status||"Check eligibility");
+    (Array.isArray(record.eligible_countries)?record.eligible_countries:[]).filter(country=>country!=="Not specified").forEach(country=>addText(tags,"span","tag",country==="Restricted; see listing"?"Region restrictions":"Region: "+country));
+    if(record.eligible_ages&&record.eligible_ages!=="Not specified")addText(tags,"span","tag",`Ages ${record.eligible_ages}`);
+    if(record.application_deadline)addText(tags,"span","tag",`Deadline ${record.application_deadline}`);
+    const key=scholarshipKey(record),isSaved=saved.has(key);
+    const star=document.createElement("button");star.className="star"+(isSaved?" saved":"");star.type="button";star.textContent=isSaved?"★ Saved":"☆ Save";star.setAttribute("aria-label",`${isSaved?"Unsave":"Save"} ${record.name||"opportunity"}`);row.append(star);
+    row.addEventListener("click",event=>{if(event.target.closest(".star,.check"))return;select(index)});
+    row.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();select(index)}});
+    check.addEventListener("click",event=>event.stopPropagation());
+    star.addEventListener("click",event=>{event.stopPropagation();toggleSaved(record)});
+    list.insertBefore(row,empty);
+  }
+  function showResult(payload){
+    hasScanned=true;
+    records.splice(0,records.length,...(Array.isArray(payload.scholarships)?payload.scholarships:[]));
+    refreshRows();
+    document.getElementById("summary").textContent=payload.summary||"No summary was returned.";
+    document.getElementById("motivation").textContent=payload.motivation||"";
+    const contacts=document.getElementById("contacts");contacts.replaceChildren();
+    const contactItems=Array.isArray(payload.contacts)?payload.contacts:[];
+    contactItems.forEach(item=>addText(contacts,"li","",typeof item==="string"?item:JSON.stringify(item)));
+    if(!contactItems.length)addText(contacts,"li","","No contact details were found in the scan.");
+    document.getElementById("view").textContent="Open source listing";
+    setMessage(`Live search complete. ${records.length} listing${records.length===1?"":"s"} matched or may fit your profile. Confirm eligibility with each official provider.`);
+    selected=records.length?0:-1;render();if(selected>=0)select(selected);
+  }
+  async function getStatus(){
+    const response=await fetch("/api/status",{cache:"no-store"});
+    const payload=await response.json();
+    if(!response.ok)throw new Error(payload.error||`Status request failed (${response.status}).`);
+    return payload;
+  }
+  async function pollStatus(){
+    try{
+      const state=await getStatus();
+      if(state.status==="running"){polling=true;render();setMessage("Live search in progress. Recent listing pages are being checked locally.");setTimeout(pollStatus,2000);return}
+      polling=false;render();
+      if(state.status==="complete"){showResult(state.result||{});notify("Scan complete.");return}
+      if(state.status==="error"){setMessage(`Scan failed: ${state.error||"Unknown pipeline error."}`,true);notify("Scan failed. See the status message for details.");return}
+      setMessage("Ready. Set your profile and find current live opportunities.");
+    }catch(error){polling=false;render();setMessage(`API connection failed: ${error.message}`,true)}
+  }
+  async function startScan(){
+    if(!profile){showProfileDialog();return}
+    try{
+      const response=await fetch("/api/scan",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({profile})});
+      const payload=await response.json();
+      if(!response.ok)throw new Error(payload.error||`Scan request failed (${response.status}).`);
+      polling=true;render();setMessage("Live search started. Recent listings are being retrieved and matched to your profile.");notify("Live scholarship search started.");setTimeout(pollStatus,1000);
+    }catch(error){setMessage(`Could not start scan: ${error.message}`,true);notify("Could not start scan. Check the API status message.")}
+  }
+  filters.forEach(button=>button.addEventListener("click",()=>{filter=button.dataset.filter;selected=-1;refreshRows();render();if(displayRecords.length)select(0)}));
+  search.addEventListener("input",render);
+  document.getElementById("clear").addEventListener("click",()=>{search.value="";filter="all";render();search.focus()});
+  document.getElementById("select-all").addEventListener("click",()=>{const visible=[...list.querySelectorAll(".row")].filter(row=>!row.classList.contains("hidden"));const checked=visible.some(row=>!row.querySelector(".check").checked);visible.forEach(row=>row.querySelector(".check").checked=checked)});
+  document.getElementById("scan").addEventListener("click",startScan);
+  document.getElementById("new-scan").addEventListener("click",startScan);
+  document.getElementById("edit-profile").addEventListener("click",showProfileDialog);
+  profileForm.addEventListener("submit",event=>{
+    event.preventDefault();
+    const form=new FormData(profileForm);
+    profile={
+      age:Number(form.get("age")),
+      country:String(form.get("country")).trim(),
+      study_level:String(form.get("study_level")),
+      grade:form.get("grade")?Number(form.get("grade")):null,
+      field_of_study:String(form.get("field_of_study")).trim(),
+      scholarship_type:String(form.get("scholarship_type")),
+    };
+    sessionStorage.setItem("scholarship-scout-profile",JSON.stringify(profile));
+    hideProfileDialog();
+    startScan();
+  });
+  document.getElementById("refresh").addEventListener("click",pollStatus);
+  document.getElementById("save-detail").addEventListener("click",()=>{if(selected>=0)toggleSaved(displayRecords[selected])});
+  document.addEventListener("keydown",event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="k"){event.preventDefault();search.focus()}});
+  render();pollStatus();
+  savedReady=loadSaved().then(()=>{refreshRows();render();return true}).catch(error=>{console.error(error);notify(error.message);return false});
+  if(!profile)showProfileDialog();
+})();
+</script>
+<script>
+(() => {
+  const status=document.getElementById("system-status");
+  const statusText=document.getElementById("system-status-text");
+  const scanButtons=[document.getElementById("scan"),document.getElementById("new-scan")];
+  const notice=document.getElementById("notice");
+  const gib=1024**3;
+  const asGb=bytes=>(bytes/gib).toFixed(1);
+  const setMeter=(id,value)=>{document.getElementById(id).style.width=`${Math.max(0,Math.min(100,value))}%`};
+  const setScanAnimation=()=>{
+    const active=/scan (started|in progress)/i.test(notice.textContent);
+    scanButtons.forEach(button=>{button.classList.toggle("loading",active);button.setAttribute("aria-busy",String(active))});
+  };
+  new MutationObserver(setScanAnimation).observe(notice,{childList:true,characterData:true,subtree:true});
+  async function refreshSystemMetrics(){
+    try{
+      const response=await fetch("/api/system",{cache:"no-store"});
+      const data=await response.json();
+      if(!response.ok)throw new Error(data.error||`System status request failed (${response.status}).`);
+      const disk=data.storage, memory=data.memory;
+      document.getElementById("storage-value").textContent=`${asGb(disk.free_bytes)} GB free`;
+      document.getElementById("storage-detail").textContent=`${asGb(disk.total_bytes-disk.free_bytes)} GB used of ${asGb(disk.total_bytes)} GB`;
+      document.getElementById("memory-value").textContent=`${asGb(memory.available_bytes)} GB available`;
+      document.getElementById("memory-detail").textContent=`${asGb(memory.total_bytes-memory.available_bytes)} GB used of ${asGb(memory.total_bytes)} GB`;
+      setMeter("storage-bar",disk.used_percent);
+      setMeter("memory-bar",memory.used_percent);
+      status.classList.remove("offline");
+      statusText.textContent="System Online";
+    }catch(error){
+      document.getElementById("storage-value").textContent="Unavailable";
+      document.getElementById("storage-detail").textContent=error.message;
+      document.getElementById("memory-value").textContent="Unavailable";
+      document.getElementById("memory-detail").textContent="Live system metrics could not be loaded.";
+      status.classList.add("offline");
+      statusText.textContent="Metrics Offline";
+    }
+  }
+  refreshSystemMetrics();
+  window.setInterval(refreshSystemMetrics,15000);
+})();
+</script>
+</body>
+</html>
